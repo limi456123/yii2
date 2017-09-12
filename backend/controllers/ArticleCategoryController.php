@@ -7,12 +7,18 @@
  */
 namespace backend\controllers;
 use backend\models\ArticleCategory;
+use yii\data\Pagination;
 use yii\web\Controller;
 
 class ArticleCategoryController extends Controller{
     public function actionIndex(){
-        $articlecategorys=\backend\models\ArticleCategory::find()->where(['!=','status','-1'])->all();
-        return $this->render('index',['articlecategorys'=>$articlecategorys]);
+        $pager=new Pagination([
+            'totalCount'=>ArticleCategory::find()->count(),
+            'defaultPageSize'=>3
+        ]);
+        $articlecategorys=\backend\models\ArticleCategory::find()->where(['!=','status','-1'])->limit($pager->limit)->offset($pager->offset)->orderBy('sort')->all();
+
+        return $this->render('index',['articlecategorys'=>$articlecategorys,'pager'=>$pager]);
     }
     public function actionAdd(){
         $articlecategory=new ArticleCategory();
