@@ -1,8 +1,8 @@
 <?php
 $form=\yii\bootstrap\ActiveForm::begin();
 
-echo $form->field($search,'name')->textInput();
-echo $form->field($search,'sn')->textInput();
+echo $form->field($seach,'name')->textInput();
+echo $form->field($seach,'sn')->textInput();
 echo \yii\bootstrap\Html::submitButton('搜索',['class'=>'btn btn-info']);
 
 \yii\bootstrap\ActiveForm::end();

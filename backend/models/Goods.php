@@ -44,6 +44,7 @@ class Goods extends \yii\db\ActiveRecord
             [['market_price', 'shop_price'], 'number'],
             [['name', 'sn'], 'string', 'max' => 20],
             [['logo'], 'string', 'max' => 255],
+            [['goods_category_id', 'brand_id', 'stock', 'is_on_sale', 'status', 'sort','market_price', 'shop_price','name', 'sn'],'required']
         ];
     }
 

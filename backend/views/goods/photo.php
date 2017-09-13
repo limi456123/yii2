@@ -26,11 +26,11 @@ function(file, data, response) {
              $('#img').attr('src',data.fileUrl);
 
              var tr='<tr>'+
-                       '<td><img class="imge"></td>'+
+                       '<td><img class="img"></td>'+
                        '<td></td>'+
                      '</tr>';
               $('table').append(tr);
-             $(".imge").attr('src',data.fileUrl);
+             $(".img").attr('src',data.fileUrl);
     }
 
 }

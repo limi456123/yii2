@@ -7,6 +7,7 @@ use backend\models\GoodsCategory;
 use backend\models\GoodsDayCount;
 use backend\models\GoodsGallery;
 use backend\models\GoodsIntro;
+use backend\models\GoodsSearch;
 use flyok666\qiniu\Qiniu;
 use flyok666\uploadifive\UploadAction;
 use yii\data\Pagination;
@@ -15,13 +16,17 @@ use yii\web\Controller;
 class GoodsController extends Controller{
     //列表
     public function actionIndex(){
-
-       $goods=Goods::find()->all();
+        $seach=new GoodsSearch();
+          $request=\yii::$app->request;
+          $seach->load($request->post());
+          $seek=GoodsSearch::getSeek($seach);
+          $count=$seek->count();
         $pager=new Pagination([
-            'totalCount'=> Goods::find()->count(),
+            'totalCount'=> $count,
             'defaultPageSize'=>3
         ]);
-     return   $this->render('index',['goods'=>$goods,'pager'=>$pager]);
+        $goods=$seek->limit($pager->limit)->offset($pager->offset)->all();
+     return   $this->render('index',['goods'=>$goods,'pager'=>$pager,'seach'=>$seach]);
     }
     //添加
     public function actionAdd(){
@@ -102,15 +107,15 @@ class GoodsController extends Controller{
                     $file=$action->getSavePath();
                     $qiniu->uploadFile($file,$key);
                     $url = $qiniu->getLink($key);
-                    $action->output['fileUrl'] =$url;
+
                     $photo=new GoodsGallery();
-                    if($url !=null){
+                    if($_REQUEST['goods_id']){
                         $photo->goods_id=$_REQUEST['goods_id'];
                         $photo->path=$url;
                         $photo->save();
-                    }
+                   }
 
-
+                    $action->output['fileUrl'] =$url;
 
                 },
             ],
@@ -175,7 +180,10 @@ class GoodsController extends Controller{
         }
         return  $this->redirect(['goods/photo','id'=>$gid]);
     }
-    public function actionInshow(){
-
+    public function actionShow($id){
+           $photo=GoodsGallery::find()->where(['goods_id'=>$id])->all();
+        $count=GoodsGallery::find()->count();
+        $intro=GoodsIntro::find()->where(['goods_id'=>$id])->one();
+        return $this->render('show',['photo'=>$photo,'count'=>$count,'intro'=>$intro]);
     }
 }

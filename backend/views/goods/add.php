@@ -12,7 +12,7 @@ echo \flyok666\uploadifive\Uploadifive::widget([
     'csrf' => true,
     'renderTag' => false,
     'jsOptions' => [
-        'formData'=>['someKey' => 'someValue'],
+        'formData'=>['goods_id' => ''],
         'width' => 120,
         'height' => 40,
         'onError' => new \yii\web\JsExpression(<<<EOF
@@ -28,11 +28,9 @@ function(file, data, response) {
         console.log(data.msg);
     } else {
         console.log(data.fileUrl);
-
             $('#goods-logo').val(data.fileUrl);
              $('#img').attr('src',data.fileUrl);
     }
-
 }
 EOF
         ),
