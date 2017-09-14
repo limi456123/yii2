@@ -23,14 +23,11 @@ function(file, data, response) {
     if (data.error) {
         console.log(data.msg);
     } else {
-             $('#img').attr('src',data.fileUrl);
-
              var tr='<tr>'+
-                       '<td><img class="img"></td>'+
+                       '<td><img class="img" src="'+data.fileUrl+'"></td>'+
                        '<td></td>'+
                      '</tr>';
               $('table').append(tr);
-             $(".img").attr('src',data.fileUrl);
     }
 
 }
