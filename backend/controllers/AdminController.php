@@ -1,18 +1,25 @@
 <?php
 namespace backend\controllers;
 use backend\models\Admin;
+use backend\models\Article;
 use backend\models\Login;
+use backend\models\Pass;
 use yii\captcha\Captcha;
 use yii\captcha\CaptchaAction;
+use yii\data\Pagination;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\widgets\LinkPager;
 
 class AdminController extends Controller{
     public function actionIndex(){
+         $pager=new Pagination([
+             'totalCount'=>Admin::find()->count(),
+             'defaultPageSize'=>3
+         ]);
+        $admins=Admin::find()->limit($pager->limit)->offset($pager->offset)->all();;
 
-        $admins=Admin::find()->all();
-
-        return $this->render('index',['admins'=>$admins]);
+        return $this->render('index',['admins'=>$admins,'pager'=>$pager]);
     }
     public function actionAdd(){
         $admin=new Admin();
@@ -24,9 +31,9 @@ class AdminController extends Controller{
 
                 $admin->save();
                 return $this->redirect(['admin/index']);
-            }else{
-                var_dump($admin->getErrors());exit;
             }
+
+
         }
         return $this->render('add',['admin'=>$admin]);
     }
@@ -53,7 +60,7 @@ class AdminController extends Controller{
 
               \Yii::$app->session->setFlash('success','修改失败');
               $this->render(['admin/edit','id'=>$id]);
-//                var_dump($admin->getErrors());exit;
+              var_dump($admin->getErrors());exit;
             }
         }
         return $this->render('edit',['admin'=>$admin]);
@@ -134,5 +141,23 @@ class AdminController extends Controller{
         return $this->redirect(['admin/login']);
        }
     }
+    public function actionPass(){
+        if(\Yii::$app->user->isGuest){
+            return $this->redirect(['admin/login']);
+        }
+        $model=new Pass();
+        $request=\Yii::$app->request;
+        if($request->isPost){
+           $model->load($request->post());
 
+            if($model->validate()){
+               $admin=\Yii::$app->user->identity;
+                $admin->password=$model->newpass;
+                $admin->save();
+                \Yii::$app->session->setFlash('success','修改成功');
+                return $this->redirect(['admin/index']);
+            }
+        }
+        return $this->render('pass',['model'=>$model]);
+    }
 }

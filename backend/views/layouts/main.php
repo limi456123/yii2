@@ -48,8 +48,13 @@ AppAsset::register($this);
                 ['class' => 'btn btn-link logout']
             )
             . Html::endForm()
+
             . '</li>';
+
+         $menuItems[]=['label' => '修改密码', 'url' => ['admin/pass']];
     }
+
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => $menuItems,

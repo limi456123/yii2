@@ -51,39 +51,32 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
             $this->created_at=time();
         }else{
             if($this->password){
-                $rst=Yii::$app->security->validatePassword($this->password,$this->password_hash);
-                if($rst){
-                   if($this->newpass===$this->vpass){
-                $this->password_hash=\Yii::$app->security->generatePasswordHash($this->newpass);
-                $this->auth_key=\Yii::$app->security->generateRandomString();
-                   }else{
-                      throw new HttpException(404,'密码不一致');
-
-                   }
-                }else{
-                    throw new HttpException(404,'密码不对');
+                if(Yii::$app->security->validatePassword($this->password,$this->password_hash)){
+                    $this->password_hash=Yii::$app->security->generatePasswordHash($this->password);
+                    $this->updated_at=time();
+                    $this->auth_key=Yii::$app->security->generateRandomString();
                 }
             }
-            $this->updated_at=time();
+
         }
         return parent::beforeSave($insert);
-    }
-    public function rules()
-    {
-        return [
-            [['status', 'created_at', 'updated_at'], 'integer'],
-            [['username', 'auth_key', 'password_hash',  'email'], 'string', 'max' => 255],
-            [['username','email'],'required'],
-            [['username','email'],'unique'],
-            ['password','required','on'=>self::SCENARIO_ADD],
-            [['vpass','newpass','password'],'string'],
-            [[ 'last_login_time', 'last_login_ip'],'string','on'=>self::SCENARIO_LOGIN]
-        ];
-    }
+        }
+public function rules()
+{
+    return [
+        [['status', 'created_at', 'updated_at'], 'integer'],
+        [['username', 'auth_key', 'password_hash',  'email'], 'string', 'max' => 255],
+        [['username','email'],'required'],
+        [['username','email'],'unique'],
+        ['password','required','on'=>self::SCENARIO_ADD],
+        [['vpass','newpass','password'],'string'],
+        [[ 'last_login_time', 'last_login_ip'],'string','on'=>self::SCENARIO_LOGIN]
+    ];
+}
 
-    /**
-     * @inheritdoc
-     */
+/**
+ * @inheritdoc
+ */
     public function attributeLabels()
     {
         return [

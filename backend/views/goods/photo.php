@@ -25,9 +25,13 @@ function(file, data, response) {
     } else {
              var tr='<tr>'+
                        '<td><img class="img" src="'+data.fileUrl+'"></td>'+
-                       '<td></td>'+
+                       '<td class="btn btn-info">删除</td>'+
                      '</tr>';
               $('table').append(tr);
+             $('table').on('cilck','',function(){
+
+
+             })
     }
 
 }
@@ -45,7 +49,7 @@ EOF
     <?php foreach($photos as $photo):?>
     <tr>
         <td class="col-xs-10"><img src="<?=$photo->path ?>"/></td>
-        <td class="col-xs-2"><a href="<?=\yii\helpers\Url::to(['goods/photodel','id'=>$photo->id,'gid'=> $goods_id])?>" class="btn btn-info">删除</a></td>
+        <td class="col-xs-2 btn btn-info">删除</td>
     </tr>
     <?php endforeach;?>
 </table>
