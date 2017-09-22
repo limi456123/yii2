@@ -28,6 +28,7 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
     public $password;
     public $newpass;
     public $vpass;
+    public $roles;
     /**
      * @inheritdoc
      */
@@ -52,7 +53,7 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
         }else{
             if($this->password){
                 if(Yii::$app->security->validatePassword($this->password,$this->password_hash)){
-                    $this->password_hash=Yii::$app->security->generatePasswordHash($this->password);
+                    $this->password_hash=Yii::$app->security->generatePasswordHash($this->newpass);
                     $this->updated_at=time();
                     $this->auth_key=Yii::$app->security->generateRandomString();
                 }
@@ -70,7 +71,8 @@ public function rules()
         [['username','email'],'unique'],
         ['password','required','on'=>self::SCENARIO_ADD],
         [['vpass','newpass','password'],'string'],
-        [[ 'last_login_time', 'last_login_ip'],'string','on'=>self::SCENARIO_LOGIN]
+        [[ 'last_login_time', 'last_login_ip'],'string','on'=>self::SCENARIO_LOGIN],
+        ['roles','safe']
     ];
 }
 
@@ -157,4 +159,31 @@ public function rules()
     {
         return $authKey==$this->auth_key;
     }
+    public static function getRoles(){
+        $auth=Yii::$app->authManager;
+        $roles=$auth->getRoles();
+        $rolebox=[];
+        foreach($roles as $role){
+            $rolebox[$role->name]=$role->description;
+        }
+        return $rolebox;
+    }
+    public function getMenu(){
+        $menus=Menu::find()->where(['parent_id'=>0])->andWhere(['status'=>1])->all();
+        $menuItems=[];
+        foreach( $menus as $menu){
+            $childs=Menu::find()->where(['parent_id'=>$menu->id])->andWhere(['status'=>1])->all();
+            $items=[];
+                foreach($childs as $child){
+                      if(Yii::$app->user->can($child->route)){
+                    $items[]=['label'=>$child->name,'url'=>[$child->route]];
+                      }
+                }
+            if(count($items)){
+            $menuItems[]=['label'=> $menu->name,'items'=>$items];
+            }
+        }
+        return $menuItems;
+    }
+
 }

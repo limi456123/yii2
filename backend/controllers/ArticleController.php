@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\Article;
 use backend\models\ArticleCategory;
 use backend\models\ArticleDetail;
+use backend\filters\RbacFiler;
 
 class ArticleController extends \yii\web\Controller
 {
@@ -75,6 +76,15 @@ class ArticleController extends \yii\web\Controller
         return [
             'upload' => [
                 'class' => 'kucha\ueditor\UEditorAction',
+            ]
+        ];
+    }
+    public function behaviors(){
+
+        return [
+            'rbac'=>[
+                'class'=>RbacFiler::className(),
+                'except'=>['login','logout','captcha','error']
             ]
         ];
     }

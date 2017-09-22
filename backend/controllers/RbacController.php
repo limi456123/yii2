@@ -3,6 +3,8 @@
 namespace backend\controllers;
 
 use backend\models\Rbacform;
+use backend\models\Rolesform;
+use backend\filters\RbacFiler;
 
 class RbacController extends \yii\web\Controller
 {
@@ -16,6 +18,7 @@ class RbacController extends \yii\web\Controller
 
     public function actionAdd(){
         $auth=new Rbacform();
+        $auth->scenario=Rbacform::SCENARIO_ADD;
         $request=\Yii::$app->request;
         if($request->isPost){
             $auth->load($request->post());
@@ -41,19 +44,30 @@ class RbacController extends \yii\web\Controller
          $rbac=\Yii::$app->authManager;
          $rba=$rbac->getPermission($name);
          $auth=new Rbacform();
+        $auth->scenario=Rbacform::SCENARIO_EDIT;
         $request=\Yii::$app->request;
         if($request->isPost){
             $auth->load($request->post());
             if($auth->validate()){
-              $rbac->remove($rba);
-             $rbc=$rbac->createPermission($auth->name);
-            $rbc->description=$auth->describe;
-              $rbac->add($rbc);
+
+                  $rba->name=$auth->name;
+                   $rba->description=$auth->describe;
+                   $rbac->update($name,$rba);
+
                 return $this->redirect(['rbac/index']);
             }
         }
         $auth->name=$rba->name;
         $auth->describe=$rba->description;
         return $this->render('add',['auth'=>$auth] );
+    }
+    public function behaviors(){
+
+        return [
+            'rbac'=>[
+                'class'=>RbacFiler::className(),
+                'except'=>['login','logout','captcha','error']
+            ]
+        ];
     }
 }

@@ -13,6 +13,7 @@ use yii\web\UploadedFile;
 use yii\widgets\LinkPager;
 use flyok666\uploadifive\UploadAction;
 use flyok666\qiniu\Qiniu;
+use backend\filters\RbacFiler;
 
 class BrandController extends Controller{
     public function actionIndex(){
@@ -131,6 +132,15 @@ class BrandController extends Controller{
 
                 },
             ],
+        ];
+    }
+    public function behaviors(){
+
+        return [
+            'rbac'=>[
+                'class'=>RbacFiler::className(),
+                'except'=>['login','logout','captcha','error']
+            ]
         ];
     }
 

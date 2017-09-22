@@ -44,7 +44,8 @@ class Goods extends \yii\db\ActiveRecord
             [['market_price', 'shop_price'], 'number'],
             [['name', 'sn'], 'string', 'max' => 20],
             [['logo'], 'string', 'max' => 255],
-            [['goods_category_id', 'brand_id', 'stock', 'is_on_sale', 'status', 'sort','market_price', 'shop_price','name', 'sn'],'required']
+            [[ 'brand_id', 'stock', 'is_on_sale', 'status', 'sort','market_price', 'shop_price','name'],'required'],
+            ['goods_category_id','validateGcid']
         ];
     }
 
@@ -86,4 +87,12 @@ class Goods extends \yii\db\ActiveRecord
     public function getBrand(){
         return $this->hasOne(Brand::className(),['id'=>'brand_id']);
     }
+
+    public function validateGcid(){
+        $gcid=$this->goods_category_id;
+        $rst=GoodsCategory::find()->where(['id'=> $gcid])->andwhere(['!=','depth',2])->one();
+        if($rst){
+            $this->addError('goods_category_id','请正确选择');
+        }
+     }
 }

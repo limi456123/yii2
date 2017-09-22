@@ -12,6 +12,7 @@ use flyok666\qiniu\Qiniu;
 use flyok666\uploadifive\UploadAction;
 use yii\data\Pagination;
 use yii\web\Controller;
+use backend\filters\RbacFiler;
 
 class GoodsController extends Controller{
     //列表
@@ -50,14 +51,12 @@ class GoodsController extends Controller{
                    $count->count=1;
                    $goods->sn=date('Ymd').sprintf('%04d',1);
                }
-                $count->save();
-                $goods->save();
+                $count->save(false);
+                $goods->save(false);
                 $intro->goods_id=$goods->id;
                 $intro->save();
                 \yii::$app->session->setFlash('success','添加成功');
                 return $this->redirect(['goods/index']);
-            }else{
-                var_dump($goods->getErrors());exit;
             }
         }
      return $this->render('add',['goods'=>$goods,'brand'=>$brand,'intro'=>$intro]);
@@ -185,5 +184,14 @@ class GoodsController extends Controller{
         $count=GoodsGallery::find()->count();
         $intro=GoodsIntro::find()->where(['goods_id'=>$id])->one();
         return $this->render('show',['photo'=>$photo,'count'=>$count,'intro'=>$intro]);
+    }
+    public function behaviors(){
+
+        return [
+            'rbac'=>[
+                'class'=>RbacFiler::className(),
+                'except'=>['login','logout','captcha','error','upload','s-upload','photo']
+            ]
+        ];
     }
 }

@@ -9,6 +9,7 @@ namespace backend\controllers;
 use backend\models\ArticleCategory;
 use yii\data\Pagination;
 use yii\web\Controller;
+use backend\filters\RbacFiler;
 
 class ArticleCategoryController extends Controller{
     public function actionIndex(){
@@ -59,6 +60,15 @@ class ArticleCategoryController extends Controller{
         }
         return $this->render('add',['articlecategory'=> $articlecategory]);
 
+    }
+    public function behaviors(){
+
+        return [
+            'rbac'=>[
+                'class'=>RbacFiler::className(),
+                'except'=>['login','logout','captcha','error']
+            ]
+        ];
     }
 
 }

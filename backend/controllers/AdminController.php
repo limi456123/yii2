@@ -1,5 +1,6 @@
 <?php
 namespace backend\controllers;
+use backend\filters\RbacFiler;
 use backend\models\Admin;
 use backend\models\Article;
 use backend\models\Login;
@@ -28,18 +29,25 @@ class AdminController extends Controller{
         if($request->getIsPost()){
             $admin->load($request->post());
             if($admin->validate()){
+               if($admin->roles){
+                   $admin->save();
+                   $auth=\Yii::$app->authManager;
+                 //var_dump($admin->roles);exit;
+                   foreach($admin->roles as $role){
+                       $auth->assign( $auth->getRole($role),$admin->id);
+                   }
+               }
 
-                $admin->save();
                 return $this->redirect(['admin/index']);
             }
-
-
         }
         return $this->render('add',['admin'=>$admin]);
     }
 
     public function actionDelete($id){
         $admin=Admin::find()->where(['id'=>$id])->one();
+        $auth=\Yii::$app->authManager;
+            $auth->revokeAll($id);
 
         $admin->delete();
         return $this->redirect(['admin/index']);
@@ -47,12 +55,21 @@ class AdminController extends Controller{
 
     public function actionEdit($id){
         $admin=Admin::find()->where(['id'=>$id])->one();
-
+        $auth=\Yii::$app->authManager;
+        $roles=$auth->getRolesByUser($id);
+       $admin->roles=array_keys( $roles);
         $request=\Yii::$app->request;
         if($request->getIsPost()){
             $admin->load($request->post());
             if($admin->validate()){
                 if($admin->save()){
+                if($admin->roles){
+                    $auth->revokeAll($id);
+                    foreach($admin->roles as $role){
+                     $auth->assign($auth->getRole($role),$id);
+                    }
+                }
+
                 \Yii::$app->session->setFlash('success','修改成功');
                 return $this->redirect(['admin/index']);
                 }
@@ -98,7 +115,7 @@ class AdminController extends Controller{
                     $admin->last_login_ip=\Yii::$app->request->getUserIP();
                     $admin->save(false);
                     \Yii::$app->session->setFlash('success','登录成功');
-                    return $this->redirect(['admin/index']);
+                    return $this->redirect(['goods/index']);
                 }else{
                     \Yii::$app->session->setFlash('success','密码不对');
                     return $this->redirect(['admin/login']);
@@ -160,4 +177,14 @@ class AdminController extends Controller{
         }
         return $this->render('pass',['model'=>$model]);
     }
+    public function behaviors(){
+
+       return [
+           'rbac'=>[
+               'class'=>RbacFiler::className(),
+                'except'=>['login','logout','captcha','error','pass']
+           ]
+       ];
+    }
+
 }

@@ -2,6 +2,7 @@
 namespace backend\controllers;
 use backend\models\GoodsCategory;
 use yii\web\Controller;
+use backend\filters\RbacFiler;
 
 class GoodsCategoryController extends Controller{
     //列表
@@ -64,5 +65,14 @@ class GoodsCategoryController extends Controller{
             }
         }
         return $this->render('add',['category'=>$category]);
+    }
+    public function behaviors(){
+
+        return [
+            'rbac'=>[
+                'class'=>RbacFiler::className(),
+                'except'=>['login','logout','captcha','error']
+            ]
+        ];
     }
 }

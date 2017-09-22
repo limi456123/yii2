@@ -29,7 +29,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Company',
+        'brandLabel' => '后台',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -41,6 +41,7 @@ AppAsset::register($this);
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => '登录', 'url' => ['admin/login']];
     } else {
+        $menuItems=Yii::$app->user->identity->getMenu();
         $menuItems[] = '<li>'
             . Html::beginForm(['admin/logout'], 'post')
             . Html::submitButton(
@@ -52,6 +53,7 @@ AppAsset::register($this);
             . '</li>';
 
          $menuItems[]=['label' => '修改密码', 'url' => ['admin/pass']];
+
     }
 
 
