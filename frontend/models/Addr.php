@@ -52,4 +52,11 @@ class Addr extends \yii\db\ActiveRecord
             'del' => '电话',
         ];
     }
+//    public function getLocations(){
+//    return    $this->hasOne(Locations::className(),['id'=>'shen']);
+//    }
+    public function getAddrname($id){
+        $addrname=Locations::findOne(['id'=>$id]);
+        return $addrname->name;
+    }
 }

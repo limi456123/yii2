@@ -54,6 +54,7 @@
 <div style="clear:both;"></div>
 
 <!-- 主体部分 start -->
+<form action="<?=\yii\helpers\Url::to(['order/add'])?>" method="post">
 <div class="fillin w990 bc mt15">
     <div class="fillin_hd">
         <h2>填写并核对订单信息</h2>
@@ -92,8 +93,8 @@
 
                     <?php foreach($delivery as $k=> $v):?>
                     <tr>
-                        <td><input type="radio" name="delivery"/><?=$v[0]?></td>
-                        <td>￥<?=$v[1]?></td>
+                        <td><input type="radio" name="delivery_id" value="<?=$k?>"/><?=$v[0]?></td>
+                        <td >￥<span class="co12_price"><?=$v[1]?></span></td>
                         <td><?=$v[2]?>.</td>
                     </tr>
                    <?php endforeach;?>
@@ -111,22 +112,16 @@
 
             <div class="pay_select">
                 <table>
-                    <tr class="cur">
-                        <td class="col1"><input type="radio" name="pay" />货到付款</td>
-                        <td class="col2">送货上门后再收款，支持现金、POS机刷卡、支票支付</td>
-                    </tr>
+<!--                    <tr class="cur">-->
+<!--                        <td class="col1"><input type="radio" name="pay" />货到付款</td>-->
+<!--                        <td class="col2">送货上门后再收款，支持现金、POS机刷卡、支票支付</td>-->
+<!--                    </tr>-->
+                    <?php foreach($payment as $k=>$v):?>
                     <tr>
-                        <td class="col1"><input type="radio" name="pay" />在线支付</td>
-                        <td class="col2">即时到帐，支持绝大数银行借记卡及部分银行信用卡</td>
+                        <td class="col1"><input type="radio" name="payment_id" value="<?=$k?>" /><?=$v[0]?></td>
+                        <td class="col2"><?=$v[1]?></td>
                     </tr>
-                    <tr>
-                        <td class="col1"><input type="radio" name="pay" />上门自提</td>
-                        <td class="col2">自提时付款，支持现金、POS刷卡、支票支付</td>
-                    </tr>
-                    <tr>
-                        <td class="col1"><input type="radio" name="pay" />邮局汇款</td>
-                        <td class="col2">通过快钱平台收款 汇款后1-3个工作日到账</td>
-                    </tr>
+                     <?php endforeach;?>
                 </table>
 
             </div>
@@ -187,21 +182,24 @@
                 <tr>
                     <td colspan="5">
                         <ul>
+                            <?php
+                            $price=0;
+                            foreach($goodsbox as $good){
+                                $price+=($cartbox[$good->id]*$good->shop_price);
+                            }
+                            ?>
                             <li>
-                                <span>4 件商品，总商品金额：</span>
-                                <em>￥5316.00</em>
+                                <span class="num"></span>件商品，总商品金额：
+                                <em>￥<span id="price_box"><?=$price?></span></em>
                             </li>
-                            <li>
-                                <span>返现：</span>
-                                <em>-￥240.00</em>
-                            </li>
+
                             <li>
                                 <span>运费：</span>
-                                <em>￥10.00</em>
+                                <em id="freight"></em>
                             </li>
                             <li>
                                 <span>应付总额：</span>
-                                <em>￥5076.00</em>
+                                <em id="price"></em>
                             </li>
                         </ul>
                     </td>
@@ -214,11 +212,12 @@
     </div>
 
     <div class="fillin_ft">
-        <a href=""><span>提交订单</span></a>
-        <p>应付总额：<strong>￥5076.00元</strong></p>
+        <span><input type="submit"/>提交订单</span>
+        <p>应付总额：<strong id="r_price">￥5076.00元</strong></p>
 
     </div>
 </div>
+</form>
 <!-- 主体部分 end -->
 
 <div style="clear:both;"></div>
@@ -247,6 +246,20 @@
         <a href=""><img src="/images/beian.gif" alt="" /></a>
     </p>
 </div>
+<script type="text/javascript">
+    $('input[name=delivery_id]').click(function(){
+
+        $('#freight').text($(this).closest('tr').find('.co12_price').text());
+
+        var price1=$('#price_box').text();
+        var price2=$('#freight').text();
+        var price3=Number(price1)+Number(price2);
+        $('#price').text(price3);
+        $('#r_price').text($('#price').text());
+    });
+    $('#price').text($('#price_box').text());
+    $('#r_price').text($('#price_box').text());
+</script>
 <!-- 底部版权 end -->
 </body>
 </html>

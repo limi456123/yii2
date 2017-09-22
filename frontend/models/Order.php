@@ -27,6 +27,7 @@ use Yii;
  */
 class Order extends \yii\db\ActiveRecord
 {
+    public $address_id;
     /**
      * @inheritdoc
      */
@@ -46,6 +47,7 @@ class Order extends \yii\db\ActiveRecord
             [['name', 'address', 'delivery_name', 'payment_name', 'trade_no'], 'string', 'max' => 255],
             [['province', 'city', 'area'], 'string', 'max' => 20],
             [['tel'], 'string', 'max' => 11],
+            [['delivery_id','payment_id','address_id'],'required']
         ];
     }
 
@@ -78,5 +80,11 @@ class Order extends \yii\db\ActiveRecord
         1=>['顺丰快递',25,'服务好,价格高,速度最快'],
         2=>['圆通快递',15,'服务一般,价格便宜,速度一般'],
         3=>['EMS',20,'服务一般,价格高,速度一般,全国任何地方都可以到']
+    ];
+    public static $payment=[
+        1=>['货到付款','送货上门后再收款，支持现金、POS机刷卡、支票支付'],
+        2=>['在线支付','即时到帐，支持绝大数银行借记卡及部分银行信用卡'],
+        3=>['上门自提','自提时付款，支持现金、POS刷卡、支票支付'],
+        4=>['邮局汇款','通过快钱平台收款 汇款后1-3个工作日到账']
     ];
 }
