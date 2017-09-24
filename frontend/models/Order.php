@@ -27,6 +27,7 @@ use Yii;
  */
 class Order extends \yii\db\ActiveRecord
 {
+
     public $address_id;
     /**
      * @inheritdoc

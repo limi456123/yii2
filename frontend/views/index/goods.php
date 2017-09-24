@@ -542,7 +542,7 @@
 
 					<div class="midpic" >
 						<a href="<?=$photo[0]->path?>" class="jqzoom " rel="gal1"  >   <!-- 第一幅图片的大图 class 和 rel属性不能更改 -->
-							<img src="<?=$photo[0]->path?>" alt="" style="height:350px;"/>               <!-- 第一幅图片的中图 -->
+							<img src="<?=$photo[0]->path?>" alt="" style="height:350px;width: 350px;"/>               <!-- 第一幅图片的中图 -->
 						</a>
 					</div>
 	

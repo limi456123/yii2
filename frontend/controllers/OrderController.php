@@ -109,8 +109,7 @@ class OrderController extends Controller{
                     $cart->delete();
                 }
                 $transaction->commit();
-               $orders=OrderGoods::find()->all();
-           return     $this->renderPartial('flow3',['orders'=>$orders]);
+             return $this->redirect(['order/show']);
             }catch (Exception $e){
                 $transaction->rollBack();
             }
@@ -118,6 +117,20 @@ class OrderController extends Controller{
             var_dump($order->getErrors());
         }
 
+    }
+    public function actionShow(){
+        $orders=Order::find()->where(['member_id'=>\Yii::$app->user->id])->all();
+          $goodbox=[];
+        foreach($orders as &$order){
+
+            $box=OrderGoods::find()->where(['order_id'=>$order->id])->all();
+            foreach($box as &$v){
+                $goodbox[$order->id][]= $v->logo;
+            }
+
+        }
+
+        return     $this->renderPartial('order',['orders'=>$orders,'goodbox'=>$goodbox]);
     }
 
 }
