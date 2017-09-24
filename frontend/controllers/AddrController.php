@@ -38,6 +38,7 @@ class AddrController extends Controller{
             if($model->validate()){
                 $model->name=\Yii::$app->user->identity->username;
                 $model->save(false);
+                return $this->redirect(['addr/index']);
             }else{
                 var_dump($model->getErrors());exit;
             }
@@ -47,12 +48,14 @@ class AddrController extends Controller{
                    $model->name=\Yii::$app->user->identity->username;
                    $model->updated_at=time();
                    $model->save(false);
+                   return $this->redirect(['addr/index']);
                }
            }
     }
     public function actionDelete($id){
         $model=Addr::findOne(['id'=>$id]);
         $model->delete();
+        return $this->redirect(['addr/index']);
     }
     public function actionGetall($id){
         $addr=Addr::find()->where(['id'=>$id])->asArray()->one();

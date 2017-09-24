@@ -17,23 +17,7 @@
 </head>
 <body>
 		<!-- 顶部导航 start -->
-	<div class="topnav">
-		<div class="topnav_bd w1210 bc">
-			<div class="topnav_left">
-				
-			</div>
-			<div class="topnav_right fr">
-				<ul>
-					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
-					<li class="line">|</li>
-					<li>我的订单</li>
-					<li class="line">|</li>
-					<li>客户服务</li>
-
-				</ul>
-			</div>
-		</div>
-	</div>
+		<?php require"/header.php"?>
 	<!-- 顶部导航 end -->
 	
 	<div style="clear:both;"></div>
@@ -467,26 +451,19 @@
           <?php foreach($addrs as $addr):?>
 				<dl class="dlbox">
 					<dt>
-						<span class="x_name"><?=$addr['sname']?></span>  <span class="x_shen"><?=$addr['shen']?></span>
-						<span class="x_city"> <?=$addr['city']?></span>  <span class="x_qu"><?=$addr['qu']?></span>
-						<span class="x_addr"><?=$addr['addr']?></span>   <span class="x_del"><?=$addr['del']?></span>
+						<span class="x_name"><?=$addr['sname']?$addr['sname']:''?></span>  <span class="x_shen"><?=$addr['shen']?$addr['shen']:''?></span>
+						<span class="x_city"> <?=$addr['city']?$addr['city']:''?></span>  <span class="x_qu"><?=$addr['qu']?$addr['qu']:''?></span>
+						<span class="x_addr"><?=$addr['addr']?$addr['addr']:''?></span>   <span class="x_del"><?=$addr['del']?$addr['del']:''?></span>
 					</dt>
 					<dd>
-						<a href="java:;" class="edit">修改</a>
+						<a href="java:;" class="edit" data-id="<?=$addr['id']?>">修改</a>
 						<a href="<?=\yii\helpers\Url::to(['addr/delete','id'=>$addr['id']])?>">删除</a>
 						<a href="">设为默认地址</a>
 					</dd>
 				</dl>
 			<?php endforeach; ?>
 
-<!--				<dl class="last"> <!-- 最后一个dl 加类last -->-->
-<!--					<dt>2.许坤 四川省 成都市 高新区 仙人跳大街 17002810530 </dt>-->
-<!--					<dd>-->
-<!--						<a href="">修改</a>-->
-<!--						<a href="">删除</a>-->
-<!--						<a href="">设为默认地址</a>-->
-<!--					</dd>-->
-<!--				</dl>-->
+
 
 			</div>
 
@@ -700,7 +677,7 @@
 				$('input[name=del]').val(value);
 			var value= $(this).closest('.dlbox').find('.x_shen').text();
 
-				var id='<?=$addr['id']?>';
+				var id=$(this).attr('data-id');
 				$.getJSON("<?=\yii\helpers\Url::to(['addr/getall'])?>",{'id':id},function(data){
 					$('#shen').val(data.shen);
 					$('#shen').change();

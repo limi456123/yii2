@@ -52,7 +52,8 @@ class MemberController extends Controller{
                             $member->last_login_time=time();
                             $member->last_login_ip=$request->getUserIP();
                             $member->save(false);
-
+                         Member::Usercookie();
+                        return $this->redirect(['index/index']);
 
                     }else{
                       echo ('密码不对');
@@ -105,6 +106,7 @@ class MemberController extends Controller{
    }
     public function actionLogout(){
         \Yii::$app->user->logout();
+        return $this->redirect(['member/login']);
     }
     public function actionSmsvalidate($tel,$sms){
         $redis=new \Redis();

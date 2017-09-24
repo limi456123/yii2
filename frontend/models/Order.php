@@ -47,7 +47,7 @@ class Order extends \yii\db\ActiveRecord
             [['name', 'address', 'delivery_name', 'payment_name', 'trade_no'], 'string', 'max' => 255],
             [['province', 'city', 'area'], 'string', 'max' => 20],
             [['tel'], 'string', 'max' => 11],
-            [['delivery_id','payment_id','address_id'],'required']
+            [['delivery_id','payment_id','address_id'],'required','message'=>'请选择']
         ];
     }
 

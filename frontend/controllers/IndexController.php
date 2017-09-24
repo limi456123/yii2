@@ -87,33 +87,6 @@ class IndexController extends Controller{
         }else{
 //登录用户
             $member=\Yii::$app->user->identity->id;
-       //同步cookie到数据库
-            $cooke=\Yii::$app->request->cookies;
-            $value=$cooke->getValue('carts');
-            if($value){
-                $carts=unserialize($value);
-                foreach($carts as $k=>$v){
-                    $cart=Cart::find()->where(['goods_id'=>$k])->andWhere(['member_id'=>$member])->one();
-
-                if($cart){
-                    $cart->amount=$cart->amount+$v;
-                    $cart->save(false);
-
-                }else{
-                $cart=new Cart();
-                $cart->goods_id=$k;
-                $cart->amount=$v;
-                $cart->member_id=$member;
-                $cart->save(false);
-
-                }
-               }
-                $cookie=\Yii::$app->request->cookies;
-                $cooke=$cookie->get('carts');
-                $cookies=\Yii::$app->response->cookies;
-                $cookies->remove($cooke);
-            }
-
             $cartes=Cart::find()->where(['member_id'=> $member])->asArray()->all();
            $goodbox=[];
             $carts=[];

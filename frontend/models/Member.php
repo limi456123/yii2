@@ -138,4 +138,32 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return $authKey==$this->auth_key;
     }
+    public static function Usercookie(){
+        //同步cookie到数据库
+        $cooke=\Yii::$app->request->cookies;
+        $value=$cooke->getValue('carts');
+        if($value){
+            $carts=unserialize($value);
+            foreach($carts as $k=>$v){
+                $cart=Cart::find()->where(['goods_id'=>$k])->andWhere(['member_id'=>\Yii::$app->user->identity->id])->one();
+
+                if($cart){
+                    $cart->amount +=$v;
+                    $cart->save(false);
+
+                }else{
+                    $cart=new Cart();
+                    $cart->goods_id=$k;
+                    $cart->amount=$v;
+                    $cart->member_id=\Yii::$app->user->identity->id;
+                    $cart->save(false);
+
+                }
+            }
+            $cookie=\Yii::$app->request->cookies;
+            $cooke=$cookie->get('carts');
+            $cookies=\Yii::$app->response->cookies;
+            $cookies->remove($cooke);
+        }
+    }
 }
