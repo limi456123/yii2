@@ -71,7 +71,7 @@
 		</div>
 		<div class="login_bd">
 			<div class="login_form fl">
-				<form action="" method="post">
+				<form action="<?php \yii\helpers\Url::to(['member/login'])?>" method="post">
 					<ul>
 						<li>
 							<label for="">用户名：</label>
