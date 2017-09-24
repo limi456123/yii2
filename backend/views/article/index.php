@@ -10,7 +10,7 @@
         <th>操作</th>
     </tr>
     <?php foreach($articles as $article): ?>
-    <tr>
+    <tr class="<?=$article->id?>">
         <td><?=$article->name?></td>
         <td><?=$article->intro?></td>
         <td><?=$article->article_category_id?></td>
@@ -25,18 +25,28 @@
     </tr>
     <?php endforeach;?>
 </table>
-<script type="text/javascript" >
-    window.onload = function(){
+<?php
+/**
+ * @var $this yii\web\View
+ */
+$url=\yii\helpers\Url::to(['article/delete']);
+$this->registerJs(new \yii\web\JsExpression(
+    <<<JS
         $('.del').on('click',function(){
             var id=$(this).closest('tr').attr('class');
-            console.log(id);
+            //console.log(id);
             var  data={'id':id};
             var self=$(this);
-            $.getJSON('<?php echo \yii\helpers\Url::to(['brand/delete']);?>',data,function(data){
-                if(data ==true){
-                    self.closest('tr').remove();
-                }
+            $.getJSON("{$url}",data,function(data){
+                 //console.log(11);
+                  if(data ==true){
+                      self.closest('tr').remove();
+                  }
             })
         })
-    }
-</script>
+
+JS
+
+));
+
+?>

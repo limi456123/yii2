@@ -130,7 +130,7 @@ class GoodsController extends Controller{
         $goods->delete();
         $intro=GoodsIntro::findOne(['goods_id'=>$id]);
         $intro->delete();
-        return $this->redirect(['goods/index']);
+        return json_encode(true);
     }
     public function actionEdit($id){
         $request=\yii::$app->request;

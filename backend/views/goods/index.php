@@ -26,7 +26,7 @@ echo \yii\bootstrap\Html::submitButton('搜索',['class'=>'btn btn-info']);
         <th>操作</th>
     </tr>
     <?php foreach($goods as $good):?>
-    <tr>
+    <tr class="<?=$good->id?>">
         <td><?=$good->name?></td>
         <td><?=$good->sn?></td>
         <td class="col-xs-1"><img src="<?=$good->logo?>" class="col-xs-12 img-circle"/></td>
@@ -40,10 +40,9 @@ echo \yii\bootstrap\Html::submitButton('搜索',['class'=>'btn btn-info']);
         <td><?=$good->sort?></td>
         <td><?=date('Y-m-d H:i:s',$good->create_time)?></td>
         <td><?=$good->view_times?></td>
-        <td class="col-xs-3
-        ">
+        <td class="col-xs-3 ">
             <a href="<?=\yii\helpers\Url::to(['goods/edit','id'=>$good->id])?>" class="btn btn-info btn-sm">修改</a>
-            <a href="<?=\yii\helpers\Url::to(['goods/delete','id'=>$good->id])?>" class="btn btn-info btn-sm">删除</a>
+            <a href="javascript:;" class="btn btn-info btn-sm del">删除</a>
             <a href="<?=\yii\helpers\Url::to(['goods/show','id'=>$good->id])?>" class="btn btn-info btn-sm">预览</a>
             <a href="<?=\yii\helpers\Url::to(['goods/photo','id'=>$good->id])?>" class="btn btn-info btn-sm">照片墙</a>
         </td>
@@ -54,3 +53,28 @@ echo \yii\bootstrap\Html::submitButton('搜索',['class'=>'btn btn-info']);
  echo \yii\widgets\LinkPager::widget([
     'pagination' =>$pager
  ]);
+
+/**
+ * @var $this yii\web\View
+ */
+$url=\yii\helpers\Url::to(['goods/delete']);
+$this->registerJs(new \yii\web\JsExpression(
+    <<<JS
+        $('.del').on('click',function(){
+            var id=$(this).closest('tr').attr('class');
+            console.log(id);
+            var  data={'id':id};
+            var self=$(this);
+            $.getJSON("{$url}",data,function(data){
+                 //console.log(11);
+                  if(data ==true){
+                      self.closest('tr').remove();
+                  }
+            })
+        })
+
+JS
+
+));
+
+?>
