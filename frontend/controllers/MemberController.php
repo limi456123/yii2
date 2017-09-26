@@ -74,6 +74,20 @@ class MemberController extends Controller{
        $code=rand(100000,999999);
        $redis=new \Redis();
        $redis->connect('127.0.0.1');
+       $time=$redis->get('time_'.$tel);
+
+       if($time && (time()-$time<60)){
+           echo '两次间隔太短';exit;
+       }
+       if(date('ymd',$time)<date('ymd')){
+           $redis->set('count_'.$tel,0);
+       }
+       $count=$redis->get('count_'.$tel);
+       if($redis->get('count'.$tel)>=20){
+           echo '发送次数过多';exit;
+       }
+       $redis->set('count_'.$tel,++$count);
+       $redis->set('time_'.$tel,time());
        $redis->set($tel,$code);
 
        $demo = new SmsDemo(

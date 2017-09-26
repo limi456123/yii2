@@ -93,4 +93,41 @@ class GoodsCategory extends \yii\db\ActiveRecord
 
        return GoodsCategory::find()->where(['id'=>$parent_id])->one();
    }
+    public static function getGoodsCategory(){
+                  $redis=new \Redis();
+                 $redis->connect('127.0.0.1');
+                  $html=$redis->get('index');
+    if(!$html){
+                   $model=GoodsCategory::find()->all();
+                   $html='';
+                   $html.=  '<div class="cat_bd">';
+            foreach($model as $v){
+                         if($v->parent_id==0){
+                   $html.= '<div class="cat item1">';
+                   $html.= '<h3><a href="'.\yii\helpers\Url::to(['index/list','id'=>$v->id]).'">'.$v->name.'</a> <b></b></h3>';
+                   $html.='<div class="cat_detail">';
+                                    foreach($model as $i){
+                                        if($i->parent_id==$v->id){
+                   $html.='<dl class="dl_1st">';
+                   $html.='<dt><a href="'.\yii\helpers\Url::to(['index/list','id'=>$i->id]).'">'.$i->name.'</a></dt>';
+                                            foreach($model as $j){
+                                                    if($j->parent_id==$i->id){
+                   $html.=' <dd>';
+                   $html.='<a href="'.\yii\helpers\Url::to(['index/list','id'=>$j->id]).'">'.$j->name.'</a>';
+                   $html.= '</dd>';
+                                                    }
+                                                }
+                   $html.='</dl>';
+                                        }
+                                    }
+                   $html.='</div>';
+                   $html.='</div>';
+                         }
+            }
+                    $html.='</div>';
+        $redis->set('index',$html);
+        $html=$redis->get('index');
+    }
+        return $html;
+    }
 }

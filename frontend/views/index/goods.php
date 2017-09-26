@@ -610,7 +610,7 @@
 						<li class="market_price"><span>定价：</span><em><?=$goods->shop_price?></em></li>
 						<li class="shop_price"><span>本店价：</span> <strong>￥<?=$goods->market_price?></strong> <a href="">(降价通知)</a></li>
 						<li><span>上架时间：</span><?=date('Y-m-d ',$goods->create_time)?></li>
-						<li class="star"><span>商品评分：</span> <strong></strong><a href="">(已有21人评价)</a></li> <!-- 此处的星级切换css即可 默认为5星 star4 表示4星 star3 表示3星 star2表示2星 star1表示1星 -->
+						<li class="star"><span>商品评分：</span> <strong></strong><a href=""><span id="viewtimes">0</span></a></li> <!-- 此处的星级切换css即可 默认为5星 star4 表示4星 star3 表示3星 star2表示2星 star1表示1星 -->
 					</ul>
 
 					<form action="<?=\yii\helpers\Url::to(['index/shop'])?>"  method="get" class="choose">
@@ -1018,6 +1018,11 @@
 
 	<script type="text/javascript">
 		document.execCommand("BackgroundImageCache", false, true);
+
+		$.getJSON("<?=\yii\helpers\Url::to(['index/view','id'=>$goods->id])?>",function(data){
+			console.log(data);
+			$('#viewtimes').text(data);
+		});
 	</script>
 </body>
 </html>

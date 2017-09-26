@@ -11,9 +11,9 @@ use yii\web\Cookie;
 class IndexController extends Controller{
 
     public function actionIndex(){
-       $model=GoodsCategory::find()->all();
 
-        return $this->render('index',['model'=>$model]);
+
+        return $this->renderPartial('index');
     }
 
     public function actionList($id){
@@ -136,4 +136,24 @@ class IndexController extends Controller{
             }
         }
     }
+    public function actionView($id){
+        $redis=new \Redis();
+        $redis->connect('127.0.0.1');
+        $times=$redis->get('times_'.$id);
+        if($times==false){
+            $goods=Goods::findOne(['id'=>$id]);
+            if($goods){
+                $times=$goods->view_times;
+
+                $redis->set('times_'.$id, $times);
+            }
+        }
+        if($times%10 == 0){
+            Goods::updateAll(['view_times'=>$times],['id'=>$id]);
+        }
+        $redis->incr('times_'.$id);
+        $times=$redis->get('times_'.$id);
+        return $times;
+    }
+
 }
